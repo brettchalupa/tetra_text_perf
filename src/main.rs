@@ -2,12 +2,13 @@ use tetra::graphics::text::{Font, Text};
 use tetra::graphics::{self, Color};
 use tetra::math::Vec2;
 use tetra::{Context, ContextBuilder, State};
+use rand::distributions::{Distribution, Uniform};
 
 const TEXT_OFFSET: Vec2<f32> = Vec2::new(16.0, 16.0);
 
 struct GameState {
     // vector_text: Text,
-    texts: Vec<Text>,
+    texts: Vec<(Text, f32, f32)>,
 }
 
 impl GameState {
@@ -16,18 +17,21 @@ impl GameState {
         //     "This is some text being rendered from a TTF font.",
         //     Font::vector(ctx, "./DejaVuSansMono.ttf", 16.0)?,
         // );
-
+        let x_between: Uniform<i32> = Uniform::from(80..1200);
+        let y_between: Uniform<i32> = Uniform::from(80..640);
+        let mut rng = rand::thread_rng();
         let mut texts = vec![];
-        for i in 1..51 {
-            texts.push(Text::new(
+        // NOTE: change the upper range to test different amounts
+        for i in 1..=2000 {
+            texts.push((Text::new(
                 format!(
-                    "{}: This is some text being rendered from a vector font.",
+                    "{}: This is some text.",
                     i
                 ),
                 Font::vector(ctx, "./DejaVuSansMono.ttf", 16.0)?,
                 // NOTE: same behavior with a bitmap font as well
                 // Font::bmfont(ctx, "./DejaVuSansMono.fnt")?,
-            ));
+            ), x_between.sample(&mut rng) as f32, y_between.sample(&mut rng) as f32));
         }
 
         Ok(GameState {
@@ -50,14 +54,8 @@ impl State for GameState {
     fn draw(&mut self, ctx: &mut Context) -> tetra::Result {
         graphics::clear(ctx, Color::rgb(0.392, 0.584, 0.929));
 
-        for (i, text) in self.texts.iter_mut().enumerate() {
-            let x = if i < 25 { 0.0 } else { 640.0 };
-            let y = if i < 25 {
-                (i as f32) * 18.0
-            } else {
-                ((i - 25) as f32) * 18.0
-            };
-            text.draw(ctx, TEXT_OFFSET + Vec2::new(x, y));
+        for (text, x, y) in &mut self.texts {
+            text.draw(ctx, TEXT_OFFSET + Vec2::new(*x, *y));
         }
 
         // NOTE: drawing the same text over and over does not impact performance
