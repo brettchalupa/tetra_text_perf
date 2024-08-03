@@ -23,6 +23,8 @@ Noticing similar behavior with `cargo run --release` as well.
 
 Drawing the same `Text` instance multiple times does not impact performance.
 
+**NOTE:** on Windows 11, the performance is much, much better!
+
 ## Why this isn't good
 
 It's not uncommon to render a lot of text in a game. For example, while building out a dev tool that renders some coordinates, I noticed the frames start to drop.
