@@ -2,6 +2,8 @@
 
 Testing out drawing text on the screen with [Tetra 0.8.0](https://crates.io/crates/tetra).
 
+[View the opened GitHub Issue.](https://github.com/17cupsofcoffee/tetra/issues/347)
+
 Clone and run with: `cargo run` or `cargo run --release`
 
 ## Results
