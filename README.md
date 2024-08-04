@@ -25,6 +25,22 @@ Drawing the same `Text` instance multiple times does not impact performance.
 
 **NOTE:** on Windows 11, the performance is much, much better!
 
-## Why this isn't good
+## Solution
 
-It's not uncommon to render a lot of text in a game. For example, while building out a dev tool that renders some coordinates, I noticed the frames start to drop.
+Turns out the problem was with how I was loading a new font for every instance. By cloning the font, I'm able to get 4,000 Text instances drawing with a steady 60 FPS:
+
+```rust
+let font = Font::vector(ctx, "./DejaVuSansMono.ttf", 16.0)?;
+for i in 1..=4000 {
+    texts.push((
+        Text::new(
+            format!("{}: This is some text.", i),
+            font.clone(),
+        ),
+        x_between.sample(&mut rng) as f32,
+        y_between.sample(&mut rng) as f32,
+    ));
+}
+```
+
+[See this issue comment for more details.](https://github.com/17cupsofcoffee/tetra/issues/347#issuecomment-2267217189)
